@@ -1,6 +1,11 @@
 # プロジェクト概要
 
-## 学習ソース
+## 参考 URL
 
-[Udemy:link](https://defidejp.udemy.com/course/nextjs-supabase-app-directory/learn/lecture/37760856#overview)
-Title:Next.js 13 App Router による次世代 Web 開発
+[Udemy：Next.js 13 App Router による次世代 Web 開発](https://defidejp.udemy.com/course/nextjs-supabase-app-directory/learn/lecture/37760856#overview)  
+[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supabase)
+
+### index
+
+_[x]NestedLayout
+_[]Benefit of Server component(js bundlw size + streamingHTML)
