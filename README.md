@@ -7,5 +7,5 @@
 
 ### index
 
-*NestedLayout
-*Benefit of Server component(js bundlw size + streamingHTML)
+- [x] NestedLayout
+- [] Benefit of Server component(js bundlw size + streamingHTML)
