@@ -11,5 +11,5 @@
 - Benefit of Server component(js bundle size + streamingHTML)
 - Server component + Client component
 - Data fetching in server component
-- Static and Dynamic rendering
+- Static and Dynamic rendering  
   _continue..._
