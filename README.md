@@ -7,5 +7,9 @@
 
 ### index
 
-- NestedLayout [x]
-- Benefit of Server component(js bundlw size + streamingHTML)
+- NestedLayout
+- Benefit of Server component(js bundle size + streamingHTML)
+- Server component + Client component
+- Data fetching in server component
+- Static and Dynamic rendering
+  _continue..._
