@@ -1,7 +1,7 @@
 # _Notebooks_
 
-更新日時： 24/7/10 18:10  
-コース：10.Root segments + file conventions
+更新日時： 24/7/12 18:19  
+コース：11 途中
 
 マークダウンのプレビュー  
 _Control + K → V_
@@ -25,6 +25,26 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - NestedLayout
 - Benefit of Server component(js bundle size + streamingHTML)
 - Server component + Client component
+  - Server component  
+    **データ取得、バックエンドに直接アクセス、access tocken, API key を含むサーバーとのやり取り、npm などのパッケージが大きいときは SC を利用する。**
+    - サーバーで Rendering されるコンポーネント → js やパッケージは client に送られない
+    - Data fetch に async function が使用できる
+    - Secure Key が参照（使用）可能※env ファイル内の
+    - Browser API が使用不可
+    - useState,useEffect が使用不可
+    - Event listener(onClick 等)は使用不可
+  - Client component  
+    **イベントリスナーの使用、useState,useReducer,useEffect,Customhooks の使用、useBrowser API の使用するときは CC を利用する**
+    - ブラウザで JS を実行する
+    - Data fetch に async function を使用できない  
+      useEffect, React-query, SWR, use を使用する必要がある
+    - Secure Key を使用不可
+    - useState, useEffect 等を使用可
+    - Event Listener(onClick 等)を使用可
+
+<u>※ClientComponent に ServerComponent を使用することはできない。  
+ClientComponent の Children として ServerComponent はネストできる</u>
+
 - Data fetching in server component ("force-cache","no-store","revalidate")
   - cache option
     - force-cache <u>Static Rendaring ○</u> (defalut)  
@@ -40,7 +60,8 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - Client side caching in navigation
 - Soft and Hard navigation
 - Revalidation frequency
-- Streaming server rendering with suspense (streamingHTML)
+- Streaming server rendering with suspense (streamingHTML)  
+  SSR の DataFetch が完了しないと HTML を返却しないという問題に対して StreamingHMTL である。処理が遅いコンポーネントに対して、suspence でラップすることで、他のコンポーネントが早く表示できる。
 - Re-rendering by router.refresh(Mutation)
 - gen types in Supabase
 - CRUD operation with protected endpoint
