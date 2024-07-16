@@ -1,7 +1,7 @@
 # _Notebooks_
 
-更新日時： 24/7/12 18:19  
-コース：12
+更新日時： 24/7/16 15:19  
+コース：13 完了
 
 マークダウンのプレビュー  
 _Control + K → V_
@@ -22,7 +22,8 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 
 ### _Overview_
 
-- NestedLayout
+- NestedLayout  
+  app ディレクトリにネストされたフォルダ（page.tsx と layout.tsx）は、layout を累積して表示する
 - Benefit of Server component(js bundle size + streamingHTML)
 - Server component + Client component
 
@@ -64,7 +65,8 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - Soft and Hard navigation
 - Revalidation frequency
 - Streaming server rendering with suspense (streamingHTML)  
-  SSR の DataFetch が完了しないと HTML を返却しないという問題に対して <u>StreamingHTML</u>で解決する。処理が遅いコンポーネントに対して、<u>コンポーネントレベルで</u>suspence でラップすることで、他のコンポーネントが Client に送られ、必要な JS をハイドレートされ、インタラクティブになり、早く表示できる。
+  SSR の DataFetch が完了しないと HTML を返却しないという問題に対して <u>StreamingHTML</u>で解決する。処理が遅いコンポーネントに対して、<u>コンポーネントレベルで</u>suspence でラップすることで、他のコンポーネントが Client に送られ、必要な JS をハイドレートされ、インタラクティブになり、早く表示できる。  
+  **ページレベルは `loading.tsx`を使用し、特定のコンポーネントは<`Suspense`>を使用する**
 - Re-rendering by router.refresh(Mutation)  
   サーバーコンポーネントでレンダリングされた内容を、ページをリロードせずに最新のものに書き換える。  
   router.refresh()
