@@ -1,10 +1,12 @@
 # _Notebooks_
 
-更新日時： 24/7/16 15:19  
-コース：13 完了
+更新日時： 24/7/18 15:19  
+コース：１４ダイナミックセグメント前まで
 
-マークダウンのプレビュー  
+マークダウンのプレビュ  
 _Control + K → V_
+
+[マークダウン記法　チートシート](https://qiita.com/kamorits/items/6f342da395ad57468ae3)
 
 # プロジェクト概要
 
@@ -59,13 +61,26 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - next : {revalidate:10}  
       一定時間たつとリロードし HTML を再生成する
 - Static and Dynamic rendering
+  - Static rendering ≒ 従来の SSG（revalidate なし）や ISR（revalidate あり）相当で build 時や revalidate 実行後にレンダリング  
+    <i>静的レンダリングは、静的なブログ投稿や製品ページなど、データのない UI やユーザー間で共有されるデータには便利。</i>  
+    <u>ビルド時 (デプロイ時) またはデータの再検証時</u>にサーバー上で行う。
+    - より高速な Web サイト：事前にレンダリングされたコンテンツをキャッシュ
+    - サーバー負荷の軽減：リクエストごとにコンテンツを動的に生成する必要なし
+    - SEO：検索エンジンのクローラーがインデックスを作成
+  - Dynamic rendering ≒ 従来の SSR 相当でリクエストごとにレンダリング  
+    <i>動的レンダリングは、データが頻繁に更新されるページやユーザー独自のページにアクセスするとき、リクエスト時の情報を必要とするページには便利。</i>  
+    <u>リクエスト時(ユーザーがページにアクセスしたとき)</u>に各ユーザーのコンテンツがサーバー上でレンダリング。
+    - リアルタイムデータ：アプリケーションはリアルタイムのデータや頻繁に更新されるデータを表示
+    - ユーザー固有のコンテンツ：パーソナライズされたコンテンツを提供し、ユーザーの操作に基づいてデータを更新する
+    - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
 - Fetch level and segment level cache options
 - Dynamic segment and generateStaticParams
 - Client side caching in navigation
 - Soft and Hard navigation
 - Revalidation frequency
-- Streaming server rendering with suspense (streamingHTML)  
-  SSR の DataFetch が完了しないと HTML を返却しないという問題に対して <u>StreamingHTML</u>で解決する。処理が遅いコンポーネントに対して、<u>コンポーネントレベルで</u>suspence でラップすることで、他のコンポーネントが Client に送られ、必要な JS をハイドレートされ、インタラクティブになり、早く表示できる。  
+- Streaming Server Rendering with suspense (streamingHTML)  
+  Streaming HTML は、サーバーが HTML を小さな部分（チャンク）に分割して順番にブラウザに送信する技術。  
+  SSR（Dynamic Rendering） の DataFetch が完了しないと HTML を返却しないという問題に対して <u>StreamingHTML</u>で解決する。処理が遅いコンポーネントを待たずに流れるようにクライアントに送られる。コンポーネントが Client に送られ、順次、ハイドレートされ、インタラクティブになり、早く表示できる。<u>コンポーネントレベルで</u>suspence でラップすることで、loading も表示できる。  
   **ページレベルは `loading.tsx`を使用し、特定のコンポーネントは<`Suspense`>を使用する**
 - Re-rendering by router.refresh(Mutation)  
   サーバーコンポーネントでレンダリングされた内容を、ページをリロードせずに最新のものに書き換える。  
@@ -77,17 +92,16 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - gen types in Supabase
 - CRUD operation with protected endpoint
 - Middleware
-  _continue..._
 
   ## <i>Reference</i>
 
   ### [一言で理解する React Server Components](https://zenn.dev/uhyo/articles/react-server-components-multi-stage)
 
   React Server Components は<u>多段階計算</u>  
-  ※多段階計算とは  
-  「動的にコードを生成してそれを走らせる機構を備えた，計算が複数のステージからなる意味論を備えた体系」→「プログラムを生成するプログラム」  
-  RSC は「サーバー側」も「クライアント側」も React コンポーネントとして記述される。  
-  2 段階の計算の場合は「stage 0 のプログラム（Server）」と「stage 1 のプログラム（Client）」がある。
+   ※多段階計算とは  
+   「動的にコードを生成してそれを走らせる機構を備えた，計算が複数のステージからなる意味論を備えた体系」→「プログラムを生成するプログラム」  
+   RSC は「サーバー側」も「クライアント側」も React コンポーネントとして記述される。  
+   2 段階の計算の場合は「stage 0 のプログラム（Server）」と「stage 1 のプログラム（Client）」がある。
 
   - Stage0 の実行タイミング（ビルド時 or リクエスト時）
 
@@ -106,3 +120,67 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     | RSC（SSR あり）    | <u>**stage0 + stage1**</u> | stage1         |
 
   **UX のためにはクライアントサイドの JavaScript が必要だが、UX に関係ない部分はサーバーサイドで処理したほうが良い。**
+
+  ### [React Server Components を理解したい](https://zenn.dev/yuu104/articles/react-server-component)
+
+  <u>Web ページのパフォーマンス指標</u>
+
+  1. FCP(First Contentful Paint)
+
+  - ブラウザが最初のテキストや画像などのコンテンツを描画するまでの時間
+  - 真っ白な画面ではなく、何かしらの表示（レイアウトなど）がある状態
+
+  2. LCP(Largest Contentful Paint)
+
+  - ページの主要なコンテンツが表示されるまでの時間
+  - ユーザが関心のあるコンテンツが含まれている
+  - DB からデータを取得し、UI にレンダリングされた状態
+
+  3. TTI(Time to Interractive)
+
+  - ページが完全にインタラクティブになるまでの時間
+  - React がダウンロードされ、アプリケーションがレンダリングされ、ハイドレーションが行われる
+  - ページ上の UI コンポーネントが反応し始め、ユーザーが入力できる状態
+
+  <u>RSC のメリット</u>
+
+  1. JS のバンドルサイズの削減  
+     SC の処理はサーバー側で簡潔するため、SC 用の JS はクライアント側には必要ありません。  
+     よって、クライアントに送信する JS バンドルを削減でき、パフォーマンスが向上します。  
+     これは、インターネットの速度が遅いユーザーや性能の低いデバイスを使用しているユーザーにとって有益です。
+  2. データフェッチスピードの高速化  
+     SC 上でデータフェッチする場合、クライアント側でのフェッチと比べると当然データソースへの距離も近くなります。  
+     これにより、レンダリングに必要なデータのフェッチにかかる時間が短縮され、クライアントが行うデータリクエストの量も削減できます。
+  3. 初期表示の改善  
+     Streaming HTML との組み合わせにより、FCP や TTI を改善できます。
+  4. セキュリティ  
+     トークンや API キーなどの機密データやロジックをサーバだけで完結できます。  
+     クライアントへ公開することによるリスクがなくなり、サービスの安全性が向上します。
+  5. 設計面のメリット (?)  
+     データの取得処理とそのデータを用いた DOM の表現が簡潔になります。
+
+  ### [PPR - pre-rendering 新時代の到来と SSR/SSG 論争の終焉](https://zenn.dev/akfm/articles/nextjs-partial-pre-rendering)
+
+  <u>Partial Pre-Rendering：ページを static rendering としつつ、部分的に dynamic rendering にすることが可能なレンダリングモデル</u>
+
+  0. pre-rendering について  
+     参考記事[SSG と SSR で理解する Next.js のページレンダリング](https://zenn.dev/luvmini511/articles/1523113e0dec58)
+
+     SPA：ページをロードする時、まず空の html を読み込んで JS ファイルも読み込んでその JS が画面をレンダリング  
+      SPA の問題点 SEO が悪い & ファーストビューが遅い
+     この問題に対して NEXT.js はすべてのページを Pre-rendering する。  
+      Pre-rendering とは「クライアント側の JS がレンダリングする代わりに、各ページに対して HTML を予め作っておくこと」  
+      Pre-rendering によって SEO と TimeToFirstBytes（ブラウザーがページをリクエストしてから、サーバーから最初の情報を受信するまでの時間） が早くなる。
+
+     Pre-rendering によって生成された HTML は、ブラウザにロードされるとき、JS によってインタラクティブになる。（このプロセスを Hydration と呼ぶ）  
+      **Pre-rendering には SSR,SSG（ISR も含む）２種類ある。**  
+      この Pre-rendering において、外部とデータのやり取りを必要とするとき、
+
+     - **SSR は getServerSideProps 関数(リクエスト時にデータを取得)を使用する**
+     - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**
+
+  1. レンダリングモデルの歴史
+  2. SSG/SSR における静的・動的データの混在
+  3. PPR とは
+  4. PPR のデメリット考察
+     _continue..._
