@@ -75,8 +75,25 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
 - Fetch level and segment level cache options
 - Dynamic segment and generateStaticParams
+  - Dynamic segment
+  - generateStaticParams  
+    Dynamic segment では、固有のパラメータごとに Dynamic Rendering するが、事前にパラメータ（id）を取得し、Static Rendering しておくことができる。
 - Client side caching in navigation
 - Soft and Hard navigation
+
+  - Soft navigation  
+    一度 fetch したデータをクライアントサイドでキャッシュしておくこと。  
+    ソフトナビゲージョンはサーバーサイドの変化を反映しない。
+    これは、Dynamic Rendering を採用しているページであっても、 ソフトナビゲーションの際は変更しないことを意味する。
+  - Hard navigation  
+    Page に遷移したタイミング毎度サーバーの変更を取り込むこと。  
+    UseRouter.push で遷移してきた時は、ハードナビゲーションが行われる。  
+    ※**Next.js version 13.4 以降は router.push の初回だけ Hard Navigation で、二回目以降は Soft Navigation になる**
+
+    ※**Dynamic Segment の際は、ダイナミックセグメントのパラメーター（id）が変更されるたびに Hard Navigatioin が走る**
+
+    ※**Dynamic Segment の中身だけでなく、入れ子構造担っている Navbar などにも変更を適応したいときは、router.refresh を利用する**
+
 - Revalidation frequency
 - Streaming Server Rendering with suspense (streamingHTML)  
   Streaming HTML は、サーバーが HTML を小さな部分（チャンク）に分割して順番にブラウザに送信する技術。  
