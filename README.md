@@ -6,6 +6,9 @@
 マークダウンのプレビュ  
 _Control + K → V_
 
+ルートハンドラは app ディレクトリ内の route.js|ts ファイルで定義されます。  
+Next.js の Server Actions は、フォーム送信などのクライアントサイドのイベントから、サーバーサイドの処理を直接呼び出す機能です。クライアント側とサーバー側の処理が同じファイルに書ける。簡略化された。
+
 [マークダウン記法　チートシート](https://qiita.com/kamorits/items/6f342da395ad57468ae3)
 
 # プロジェクト概要
@@ -75,6 +78,11 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - ユーザー固有のコンテンツ：パーソナライズされたコンテンツを提供し、ユーザーの操作に基づいてデータを更新する
     - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
 - Fetch level and segment level cache options
+  - force-cache:デフォルトは fetch で返された値をサーバーのデータキャッシュに格納される。  
+    ※ **ServerAction 内と POST メソッドが使用されたルートハンドラ**では、fetch されたデータがキャッシュされない。
+  - revalidate
+    データの再検証と呼ばれる。データ キャッシュを消去し、最新のデータを再取得するプロセス。 種類は、時間ベースの再検証とオンデマンド再検証（手動で再検証）がある。
+    ここが途中）
 - Dynamic segment and generateStaticParams
   - Dynamic segment  
     セグメント：app フォルダ配下の blogs フォルダや nested-layout フォルダのこと  
@@ -197,8 +205,10 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
       **Pre-rendering には SSR,SSG（ISR も含む）２種類ある。**  
       この Pre-rendering において、外部とデータのやり取りを必要とするとき、
 
-     - **SSR は getServerSideProps 関数(リクエスト時にデータを取得)を使用する**
-     - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**
+     - **SSR は getServerSideProps 関数(リクエスト時にデータを取得)を使用する**  
+        getServerSideProps によって、クライアント側の情報（ユーザー情報）をサーバー側で利用できる。getServerSideProps を使う事で、サーバー側でデータを取得して動的な Web ページが生成できる。
+     - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**  
+        データがヘッドレス CMS から取得できる場合、データが public にキャッシュされうる（ユーザー固有でない）ときに利用する。
 
   1. レンダリングモデルの歴史
      - Pages Router 時代  
