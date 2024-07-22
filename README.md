@@ -1,7 +1,7 @@
 # _Notebooks_
 
-更新日時： 24/7/18 15:19  
-コース：１４ダイナミックセグメント前まで
+更新日時： 24/7/22 17:00  
+コース：15 完了
 
 マークダウンのプレビュ  
 _Control + K → V_
@@ -27,7 +27,10 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - NestedLayout  
   app ディレクトリにネストされたフォルダ（page.tsx と layout.tsx）は、layout を累積して表示する
 - Benefit of Server component(js bundle size + streamingHTML)
+  - UI の非インタラクティブな部分をサーバーコンポーネントに閉じることで、クライアント側に送る JS の量を減らすことができる。ブラウザーがダウンロード、解析、実行するクライアント側 JavaScript が少なくなるため、インターネット速度が遅いユーザーや性能の低いデバイスを使用するユーザーにとって有益。
+  - レンダリング作業をチャンク（断片）に分割し、準備できたらクライアント側にストリーミングできる。これにより、ユーザーはページが全体がレンダリングされるのを待たずに利用できる。
 - Server component + Client component
+  <img src="public/images/image.png" width="70%">
 
   - Server component  
     **データ取得、バックエンドに直接アクセス、access tocken, API key を含むサーバーとのやり取り、npm などのパッケージが大きいときは SC を利用する。**
@@ -46,20 +49,18 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - useState, useEffect 等を使用可
     - Event Listener(onClick 等)を使用可
 
-  ![ServerComponentsとClientComponentの使い分け表](image.png)
-
   <u>※ClientComponent に ServerComponent を使用することはできない。  
-  ClientComponent の Children として ServerComponent はネストできる</u>
+   ClientComponent の Children として ServerComponent はネストできる</u>
 
 - Data fetching in server component ("force-cache","no-store","revalidate")
   - cache option
     - force-cache <u>Static Rendaring ○</u> (defalut)  
       ビルド時に HTML を生成し、CDN にキャッシュするため、サーバーのデータ変更をリアルタイムに更新しない。  
       ビルド時に生成された HTML は .next>server>app>index.html に格納される。
+    - next : {revalidate:10} <u>Static Rendaring ○</u>  
+      一定時間たつとリロードし HTML を再生成する
     - no-store <u>Dynamic Rendaring λ</u>  
       サーバー側の変更を反映する
-    - next : {revalidate:10}  
-      一定時間たつとリロードし HTML を再生成する
 - Static and Dynamic rendering
   - Static rendering ≒ 従来の SSG（revalidate なし）や ISR（revalidate あり）相当で build 時や revalidate 実行後にレンダリング  
     <i>静的レンダリングは、静的なブログ投稿や製品ページなど、データのない UI やユーザー間で共有されるデータには便利。</i>  
