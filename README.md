@@ -74,9 +74,12 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - ユーザー固有のコンテンツ：パーソナライズされたコンテンツを提供し、ユーザーの操作に基づいてデータを更新する
     - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
 - Fetch level and segment level cache options
-- Dynamic segment and generateStaticParams
+- Dynamic segment and generateStaticParams  
+  セグメント：app フォルダ配下の blogs フォルダや nested-layout フォルダのこと  
+  動的セグメント：[blogId]フォルダのようにコンテンツの中身だけを変更し、path も各々で変更させるときに使用する」
 - Client side caching in navigation
 - Soft and Hard navigation
+  Sofr
 - Revalidation frequency
 - Streaming Server Rendering with suspense (streamingHTML)  
   Streaming HTML は、サーバーが HTML を小さな部分（チャンク）に分割して順番にブラウザに送信する技術。  
@@ -89,7 +92,8 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   <u>router.refresh とページ全体のリロードの挙動の違い</u>  
   router.refresh：サーバーサイドの実行（useState で管理する値を保持する）  
   ページ全体のリロード：サーバーサイドとクライアントサイドの実行（useState で管理する値を保持しない）
-- gen types in Supabase
+- gen types in Supabase  
+  型の自動生成
 - CRUD operation with protected endpoint
 - Middleware
 
@@ -180,7 +184,44 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
      - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**
 
   1. レンダリングモデルの歴史
-  2. SSG/SSR における静的・動的データの混在
-  3. PPR とは
+     - Pages Router 時代  
+       SSR、SSG,ISR を対応している NEXT.js がシェアを獲得
+     - App Router 登場以降  
+       App Router は SSR/SSG/ISR ではなく、static rendering と dynamic rendering という 2 つの概念を使って多くの機能を説明している。  
+       <i>Static Rendering</i>従来の SSG や ISR 相当で、build 時や revalidate 実行後にレンダリング  
+       <i>Dynamic Rendering</i>従来の SSR 相当で、リクエストごとにレンダリング
+     - Streaming SSR  
+       Streaming SSR はページのレンダリングの一部を<`Suspense`>で遅延レンダリングにすることが可能で、  
+       レンダリングが完了するごとに徐々に結果がクライアントへと送信される。  
+       **1 つの HTTP レスポンスで完結**しているので SEO 観点もフォロー
+  2. SSG/SSR における静的・動的データの混在  
+     ページを構成するのに必要なデータが、静的なデータ（キャッシュ可能）と動的データ(キャッシュ不可能)で混在することがある。  
+     (Ex)  
+     静的データ（更新頻度が少なく、build 時や revalidate ごとに取得で適当なデータ）  
+     動的データ（ログイン情報など）
+
+     このようなケースは、大きく二つの実装パターンが存在する
+
+     1. SSG + Client fetch : ページ自体は SSG にしてクライアントサイドで動的データを fetch する
+     2. Streaming SSR : 静的データはキャッシュを使用して高速化しつつ、ページの一部を<`Suspense`>で遅延レンダリングする
+
+        | 観点                  | SSG + Client fetch | Streaming SSR |
+        | --------------------- | ------------------ | ------------- |
+        | Time To First Bytes   | 有利               | 若干不利      |
+        | HTTP ラウンドトリップ | 複数回             | １回          |
+        | CDN キャッシュ        | 可能               | 不可          |
+        | 実装                  | 冗長になりがち     | シンプル      |
+
+        ※Time To First Bytes:ブラウザーがページをリクエストしてから、サーバーから最初の情報を受信するまでの時間  
+        ※HTTP ラウンドトリップ：通信やネットワーク、データ伝送などの分野では、通信相手に信号やデータを発信して、応答が帰ってくるまでの過程、回数  
+        ※Client fetch の場合クライアントサイド処理とサーバー側のエンドポイントを繋ぐ処理(API Routes、tRPC、GraphQL など)が必要。すなわち実装が冗長
+
+     **Streaming SSR に SSG が持つ TTFB の速度を持たせたレンダリング手法が PPR**
+
+  3. PPR とは  
+     PPR は Streaming SSR をさらに進化させた技術で、<u>ページを static rendering としつつ、部分的に dynamic rendering にすることが可能なレンダリングモデル。 </u>  
+     SSG・ISR のページの一部に SSR な部分を組み合わせられるようなイメージ、あるいは Streaming SSR のスケルトン部分を SSG/ISR にするイメージ。
   4. PPR のデメリット考察
-     _continue..._
+
+  generate Static Params ってなんなん
+  _continue..._
