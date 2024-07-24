@@ -1,6 +1,6 @@
 # _Notebooks_
 
-更新日時： 24/7/22 17:00  
+更新日時： 24/7/24 11:00  
 コース：15 完了
 
 マークダウンのプレビュ  
@@ -77,12 +77,15 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - リアルタイムデータ：アプリケーションはリアルタイムのデータや頻繁に更新されるデータを表示
     - ユーザー固有のコンテンツ：パーソナライズされたコンテンツを提供し、ユーザーの操作に基づいてデータを更新する
     - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
-- Fetch level and segment level cache options
+- Fetch level and segment level cache options  
+  参考資料：[Data Fetching, Caching, and Revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)
+
   - force-cache:デフォルトは fetch で返された値をサーバーのデータキャッシュに格納される。  
     ※ **ServerAction 内と POST メソッドが使用されたルートハンドラ**では、fetch されたデータがキャッシュされない。
   - revalidate
     データの再検証と呼ばれる。データ キャッシュを消去し、最新のデータを再取得するプロセス。 種類は、時間ベースの再検証とオンデマンド再検証（手動で再検証）がある。
-    ここが途中）
+  - no-store:データキャッシュのオプトアウト（オプトアウト：不参加や脱退の意）キャッシュされない。
+
 - Dynamic segment and generateStaticParams
   - Dynamic segment  
     セグメント：app フォルダ配下の blogs フォルダや nested-layout フォルダのこと  
@@ -248,7 +251,15 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   3. PPR とは  
      PPR は Streaming SSR をさらに進化させた技術で、<u>ページを static rendering としつつ、部分的に dynamic rendering にすることが可能なレンダリングモデル。 </u>  
      SSG・ISR のページの一部に SSR な部分を組み合わせられるようなイメージ、あるいは Streaming SSR のスケルトン部分を SSG/ISR にするイメージ。
+     | 観点 |Partial Pre-Rendering| SSG + Client fetch | Streaming SSR |
+     | --------------------- |----------| ------------------ | ------------- |
+     | Time To First Bytes |有利| 有利 | 若干不利 |
+     | HTTP ラウンドトリップ |１回| 複数回 | １回 |
+     | CDN キャッシュ |不可| 可能 | 不可 |
+     | 実装 |シンプル| 冗長になりがち | シンプル |
+     PPR では、SSG+Client fetch 相当の TTFB と実装のシンプルさ、かつ Streaming SSR 同様、HTTP ラウンドドリップも１度で完結する。どちらものメリットを併せ持つ。HTML 内に動的な要素が含まれるため CDN キャッシュは不可。
   4. PPR のデメリット考察
 
-  generate Static Params ってなんなん
-  _continue..._
+  - PPR は画面の静的化された部分については返してしまうため、ページの HTTP Status は必ず 200 になる。
+  - static rendering で完結できるならその方が良い  
+    dynamic rendering を含むページでも PPR なら TTFB を SSG に近づけることが可能。しかし、パフォーマンスというのは TTFB だけで測るものではありません。例えば Time to Interactive においては PPR でも SSR でも大きくは変わらないため、ページ全体を SSG にできるならその方が有利でしょう。
