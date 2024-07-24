@@ -1,7 +1,7 @@
 # _Notebooks_
 
-更新日時： 24/7/24 11:00  
-コース：15 完了
+更新日時： 24/7/24 14:30  
+コース：16 実装は完了、再度見直してメモを残す
 
 マークダウンのプレビュ  
 _Control + K → V_
@@ -93,6 +93,7 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   - generateStaticParams  
     Dynamic segment では、固有のパラメータごとに Dynamic Rendering するが、事前にパラメータ（id）を取得し、Static Rendering しておくことができる。
 - Client side caching in navigation
+
 - Soft and Hard navigation
 
   - Soft navigation  
@@ -122,7 +123,28 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   ページ全体のリロード：サーバーサイドとクライアントサイドの実行（useState で管理する値を保持しない）
 - gen types in Supabase  
   型の自動生成
-- CRUD operation with protected endpoint
+- CRUD operation with protected endpoint  
+  C(CREATE)  
+  R(READ)  
+  U(UPDATE)  
+  D(DELETE)  
+  Supabase で Row Level Security を実装しているときは、認証を通さないと CRUD 操作ができなくなっている。
+
+  - endpoint protection  
+    CREATE UPDATE DELETE は ClientComponent 経由で行われる。ブラウザからログインしたときのアクセストークンがクライアント側に付与されていることで、SupabaseAPI によってクライアントコンポーネントの CUD 操作に自動的にアクセストークンが自動付与されるので、認証が容易。
+
+    しかし、ServerComponent 経由で行われる READ 操作は、クライアント側で保持しているアクセストークンをサーバーコンポーネントに付与する必要がある。これには Headers を用いる。
+
+    アクセストークンとは：**Web サービスを利用するために、認証局がユーザーを認証するために払い出した認証情報。**
+
+    アクセストークン認証とは：**一度入力したメールアドレスなどのログイン ID やパスワードを各認証ページに引き継ぐこと、つまり、アクセスの度にログイン ID やパスワードを通信させ使用することは、セキュリティの観点からは危険なため、認証局は初回ログイン以降にユーザーを認証するための、「アクセストークン」を払い出し、初回ログイン以降は、払い出した「アクセストークン」でユーザーを認証すること**
+
+  - Sync(同期) Server and Client access token  
+    異なるユーザーがログインしたとき、Client 側のアクセストークンが更新され、Server 側のアクセストークンと異なる。このとき、どのようにアクセストークンを同期させるか。
+    1. User がログインする
+    2. Client と Server のトークンを比較する
+    3. もし異なるのであれば、サーバーコンポーネントを走らせて、クライアントから新しいトークンを取得する。
+
 - Middleware
 
   ## <i>Reference</i>
