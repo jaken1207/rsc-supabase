@@ -1,10 +1,13 @@
 # _Notebooks_
 
-更新日時： 24/7/20 16:19  
-コース：14 終了
+更新日時： 24/7/24 14:30  
+コース：16 実装は完了、再度見直してメモを残す
 
 マークダウンのプレビュ  
 _Control + K → V_
+
+ルートハンドラは app ディレクトリ内の route.js|ts ファイルで定義されます。  
+Next.js の Server Actions は、フォーム送信などのクライアントサイドのイベントから、サーバーサイドの処理を直接呼び出す機能です。クライアント側とサーバー側の処理が同じファイルに書ける。簡略化された。
 
 [マークダウン記法　チートシート](https://qiita.com/kamorits/items/6f342da395ad57468ae3)
 
@@ -27,7 +30,10 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
 - NestedLayout  
   app ディレクトリにネストされたフォルダ（page.tsx と layout.tsx）は、layout を累積して表示する
 - Benefit of Server component(js bundle size + streamingHTML)
+  - UI の非インタラクティブな部分をサーバーコンポーネントに閉じることで、クライアント側に送る JS の量を減らすことができる。ブラウザーがダウンロード、解析、実行するクライアント側 JavaScript が少なくなるため、インターネット速度が遅いユーザーや性能の低いデバイスを使用するユーザーにとって有益。
+  - レンダリング作業をチャンク（断片）に分割し、準備できたらクライアント側にストリーミングできる。これにより、ユーザーはページが全体がレンダリングされるのを待たずに利用できる。
 - Server component + Client component
+  <img src="public/images/image.png" width="70%">
 
   - Server component  
     **データ取得、バックエンドに直接アクセス、access tocken, API key を含むサーバーとのやり取り、npm などのパッケージが大きいときは SC を利用する。**
@@ -46,20 +52,18 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - useState, useEffect 等を使用可
     - Event Listener(onClick 等)を使用可
 
-  ![ServerComponentsとClientComponentの使い分け表](image.png)
-
   <u>※ClientComponent に ServerComponent を使用することはできない。  
-  ClientComponent の Children として ServerComponent はネストできる</u>
+   ClientComponent の Children として ServerComponent はネストできる</u>
 
 - Data fetching in server component ("force-cache","no-store","revalidate")
   - cache option
     - force-cache <u>Static Rendaring ○</u> (defalut)  
       ビルド時に HTML を生成し、CDN にキャッシュするため、サーバーのデータ変更をリアルタイムに更新しない。  
       ビルド時に生成された HTML は .next>server>app>index.html に格納される。
+    - next : {revalidate:10} <u>Static Rendaring ○</u>  
+      一定時間たつとリロードし HTML を再生成する
     - no-store <u>Dynamic Rendaring λ</u>  
       サーバー側の変更を反映する
-    - next : {revalidate:10}  
-      一定時間たつとリロードし HTML を再生成する
 - Static and Dynamic rendering
   - Static rendering ≒ 従来の SSG（revalidate なし）や ISR（revalidate あり）相当で build 時や revalidate 実行後にレンダリング  
     <i>静的レンダリングは、静的なブログ投稿や製品ページなど、データのない UI やユーザー間で共有されるデータには便利。</i>  
@@ -73,12 +77,23 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     - リアルタイムデータ：アプリケーションはリアルタイムのデータや頻繁に更新されるデータを表示
     - ユーザー固有のコンテンツ：パーソナライズされたコンテンツを提供し、ユーザーの操作に基づいてデータを更新する
     - リクエスト時の情報：Cookie や URL 検索パラメータなど、リクエスト時にのみ知ることができる情報にアクセスできる
-- Fetch level and segment level cache options
+- Fetch level and segment level cache options  
+  参考資料：[Data Fetching, Caching, and Revalidating](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating)
+
+  - force-cache:デフォルトは fetch で返された値をサーバーのデータキャッシュに格納される。  
+    ※ **ServerAction 内と POST メソッドが使用されたルートハンドラ**では、fetch されたデータがキャッシュされない。
+  - revalidate
+    データの再検証と呼ばれる。データ キャッシュを消去し、最新のデータを再取得するプロセス。 種類は、時間ベースの再検証とオンデマンド再検証（手動で再検証）がある。
+  - no-store:データキャッシュのオプトアウト（オプトアウト：不参加や脱退の意）キャッシュされない。
+
 - Dynamic segment and generateStaticParams
-  - Dynamic segment
+  - Dynamic segment  
+    セグメント：app フォルダ配下の blogs フォルダや nested-layout フォルダのこと  
+    動的セグメント：[blogId]フォルダのようにコンテンツの中身だけを変更し、path も各々で変更させるときに使用する」
   - generateStaticParams  
     Dynamic segment では、固有のパラメータごとに Dynamic Rendering するが、事前にパラメータ（id）を取得し、Static Rendering しておくことができる。
 - Client side caching in navigation
+
 - Soft and Hard navigation
 
   - Soft navigation  
@@ -106,8 +121,32 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   <u>router.refresh とページ全体のリロードの挙動の違い</u>  
   router.refresh：サーバーサイドの実行（useState で管理する値を保持する）  
   ページ全体のリロード：サーバーサイドとクライアントサイドの実行（useState で管理する値を保持しない）
-- gen types in Supabase
-- CRUD operation with protected endpoint
+- gen types in Supabase  
+  型の自動生成
+- CRUD operation with protected endpoint  
+  C(CREATE)  
+  R(READ)  
+  U(UPDATE)  
+  D(DELETE)  
+  Supabase で Row Level Security を実装しているときは、認証を通さないと CRUD 操作ができなくなっている。
+
+  - endpoint protection  
+    CREATE UPDATE DELETE は ClientComponent 経由で行われる。ブラウザからログインしたときのアクセストークンがクライアント側に付与されていることで、SupabaseAPI によってクライアントコンポーネントの CUD 操作に自動的にアクセストークンが自動付与されるので、認証が容易。
+
+    しかし、ServerComponent 経由で行われる READ 操作は、クライアント側で保持しているアクセストークンをサーバーコンポーネントに付与する必要がある。これには Headers を用いる。
+
+    アクセストークンとは：**Web サービスを利用するために、認証局がユーザーを認証するために払い出した認証情報。**
+
+    アクセストークン認証とは：**一度入力したメールアドレスなどのログイン ID やパスワードを各認証ページに引き継ぐこと、つまり、アクセスの度にログイン ID やパスワードを通信させ使用することは、セキュリティの観点からは危険なため、認証局は初回ログイン以降にユーザーを認証するための、「アクセストークン」を払い出し、初回ログイン以降は、払い出した「アクセストークン」でユーザーを認証すること**
+
+  - Sync(同期) Server and Client access token  
+    異なるユーザーがログインしたとき、Client 側のアクセストークンが更新され、Server 側のアクセストークンと異なる。このとき、どのようにアクセストークンを同期させるか。
+    1. User がログインする
+    2. Client と Server のトークンを比較する
+    3. もし異なるのであれば、サーバーコンポーネントを走らせて、クライアントから新しいトークンを取得する。
+  - Global State
+  - payload 通信データの本体
+
 - Middleware
 
   ## <i>Reference</i>
@@ -193,11 +232,115 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
       **Pre-rendering には SSR,SSG（ISR も含む）２種類ある。**  
       この Pre-rendering において、外部とデータのやり取りを必要とするとき、
 
-     - **SSR は getServerSideProps 関数(リクエスト時にデータを取得)を使用する**
-     - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**
+     - **SSR は getServerSideProps 関数(リクエスト時にデータを取得)を使用する**  
+        getServerSideProps によって、クライアント側の情報（ユーザー情報）をサーバー側で利用できる。getServerSideProps を使う事で、サーバー側でデータを取得して動的な Web ページが生成できる。
+     - **SSG は getStaticProps 関数(ビルド時にデータを取得)を使用する**  
+        データがヘッドレス CMS から取得できる場合、データが public にキャッシュされうる（ユーザー固有でない）ときに利用する。
 
   1. レンダリングモデルの歴史
-  2. SSG/SSR における静的・動的データの混在
-  3. PPR とは
+     - Pages Router 時代  
+       SSR、SSG,ISR を対応している NEXT.js がシェアを獲得
+     - App Router 登場以降  
+       App Router は SSR/SSG/ISR ではなく、static rendering と dynamic rendering という 2 つの概念を使って多くの機能を説明している。  
+       <i>Static Rendering</i>従来の SSG や ISR 相当で、build 時や revalidate 実行後にレンダリング  
+       <i>Dynamic Rendering</i>従来の SSR 相当で、リクエストごとにレンダリング
+     - Streaming SSR  
+       Streaming SSR はページのレンダリングの一部を<`Suspense`>で遅延レンダリングにすることが可能で、  
+       レンダリングが完了するごとに徐々に結果がクライアントへと送信される。  
+       **1 つの HTTP レスポンスで完結**しているので SEO 観点もフォロー
+  2. SSG/SSR における静的・動的データの混在  
+     ページを構成するのに必要なデータが、静的なデータ（キャッシュ可能）と動的データ(キャッシュ不可能)で混在することがある。  
+     (Ex)  
+     静的データ（更新頻度が少なく、build 時や revalidate ごとに取得で適当なデータ）  
+     動的データ（ログイン情報など）
+
+     このようなケースは、大きく二つの実装パターンが存在する
+
+     1. SSG + Client fetch : ページ自体は SSG にしてクライアントサイドで動的データを fetch する
+     2. Streaming SSR : 静的データはキャッシュを使用して高速化しつつ、ページの一部を<`Suspense`>で遅延レンダリングする
+
+        | 観点                  | SSG + Client fetch | Streaming SSR |
+        | --------------------- | ------------------ | ------------- |
+        | Time To First Bytes   | 有利               | 若干不利      |
+        | HTTP ラウンドトリップ | 複数回             | １回          |
+        | CDN キャッシュ        | 可能               | 不可          |
+        | 実装                  | 冗長になりがち     | シンプル      |
+
+        ※Time To First Bytes:ブラウザーがページをリクエストしてから、サーバーから最初の情報を受信するまでの時間  
+        ※HTTP ラウンドトリップ：通信やネットワーク、データ伝送などの分野では、通信相手に信号やデータを発信して、応答が帰ってくるまでの過程、回数  
+        ※Client fetch の場合クライアントサイド処理とサーバー側のエンドポイントを繋ぐ処理(API Routes、tRPC、GraphQL など)が必要。すなわち実装が冗長
+
+     **Streaming SSR に SSG が持つ TTFB の速度を持たせたレンダリング手法が PPR**
+
+  3. PPR とは  
+     PPR は Streaming SSR をさらに進化させた技術で、<u>ページを static rendering としつつ、部分的に dynamic rendering にすることが可能なレンダリングモデル。 </u>  
+     SSG・ISR のページの一部に SSR な部分を組み合わせられるようなイメージ、あるいは Streaming SSR のスケルトン部分を SSG/ISR にするイメージ。
+     | 観点 |Partial Pre-Rendering| SSG + Client fetch | Streaming SSR |
+     | --------------------- |----------| ------------------ | ------------- |
+     | Time To First Bytes |有利| 有利 | 若干不利 |
+     | HTTP ラウンドトリップ |１回| 複数回 | １回 |
+     | CDN キャッシュ |不可| 可能 | 不可 |
+     | 実装 |シンプル| 冗長になりがち | シンプル |
+     PPR では、SSG+Client fetch 相当の TTFB と実装のシンプルさ、かつ Streaming SSR 同様、HTTP ラウンドドリップも１度で完結する。どちらものメリットを併せ持つ。HTML 内に動的な要素が含まれるため CDN キャッシュは不可。
   4. PPR のデメリット考察
-     _continue..._
+
+  - PPR は画面の静的化された部分については返してしまうため、ページの HTTP Status は必ず 200 になる。
+  - static rendering で完結できるならその方が良い  
+    dynamic rendering を含むページでも PPR なら TTFB を SSG に近づけることが可能。しかし、パフォーマンスというのは TTFB だけで測るものではありません。例えば Time to Interactive においては PPR でも SSR でも大きくは変わらないため、ページ全体を SSG にできるならその方が有利でしょう。
+
+  ### 認証の仕組み
+
+  HTTP 通信はステートレス（状態をもたない）ので、
+  ログインを実現するためには、**Cookie を使ったセッション管理が必要**
+
+  - session:サーバー側で一時的に保持している情報  
+    例：sessionID を発行して、情報に紐づける。session の方が安全
+  - cookie:テキスト情報をブラウザ側で一時的に保持している機能  
+    例：ログイン情報、カート機能、広告の最適化（サードパーティ Cookie）
+  - キャッシュ：閲覧したページをブラウザで保存  
+    スーパーリロードでキャッシュを削除できる。
+
+### [Firebase vs Supabase](https://www.youtube.com/watch?v=4iQL1oi6F18)
+
+- Firebase  
+  Google が提供している Web・モバイルのためのプラットフォーム。  
+  Backend as a Service→ バックエンドの環境構築の実装不要。開発コスト削減。
+  - Cloud Firestore:NoSQL（Not only SQL）のデータベース
+  - Firebase Analytics:アクセス分析
+  - Firebase Hosting:ホスティングサービス
+  - Firebase Authentication:認証機能
+  - Cloud Storage for Firebase:写真や動画の保存管理
+  - Firebase Cloud Message:メッセージング機能
+- Supabase  
+  シンガポールを拠点にするスタートアップ企業によって提供される BaaS
+  - BaaS で Firebase の代替として注目を集める
+  - オープンソースなので自分で用意したサーバーにデプロイ可能
+  - Firebase 同様にデータベース、認証、ストレージ機能などを提供
+  - PostgresSQL（RDBMS）を採用している
+- NoSQL vs RDBMS
+
+  - NoSQL
+    - スキーマを定義する必要がない
+    - 処理が高速
+    - 単純なデータを扱いやすい  
+      ↓
+    - 複雑なデータ処理が苦手
+    - データの一貫性や整合性が保証されない  
+      （NoSQL のイメージ）  
+       <img src="public/images/FirebaseVSSupabase.png" width="70%">
+  - RDBMS はデータを厳格に扱いたいときに便利
+
+    - 複雑なデータ処理が行える
+    - データ処理に一貫性、整合性がある
+    - 一般的には NoSQL より低速
+    - 学習コストがかかる
+
+- Firebase と Supabase の比較
+  | | Firebase | Supabase |
+  | :------------------- | :-------------------: | :----------------------: |
+  | 機能の種類 | 　　 優 | 劣 |
+  | データベース | NoSQL（ドキュメント） | PostgresSQL |
+  | 処理速度 | 優 | 劣 |
+  | 処理の一貫性・整合性 | 劣 | 優 |
+  | 向いている処理 | 単純な処理で大規模 | 決済処理などの複雑な処理 |
+  | 学習コスト | 低い | 高い |
