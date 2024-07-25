@@ -144,6 +144,8 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
     1. User がログインする
     2. Client と Server のトークンを比較する
     3. もし異なるのであれば、サーバーコンポーネントを走らせて、クライアントから新しいトークンを取得する。
+  - Global State
+  - payload 通信データの本体
 
 - Middleware
 
@@ -285,3 +287,60 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   - PPR は画面の静的化された部分については返してしまうため、ページの HTTP Status は必ず 200 になる。
   - static rendering で完結できるならその方が良い  
     dynamic rendering を含むページでも PPR なら TTFB を SSG に近づけることが可能。しかし、パフォーマンスというのは TTFB だけで測るものではありません。例えば Time to Interactive においては PPR でも SSR でも大きくは変わらないため、ページ全体を SSG にできるならその方が有利でしょう。
+
+  ### 認証の仕組み
+
+  HTTP 通信はステートレス（状態をもたない）ので、
+  ログインを実現するためには、**Cookie を使ったセッション管理が必要**
+
+  - session:サーバー側で一時的に保持している情報  
+    例：sessionID を発行して、情報に紐づける。session の方が安全
+  - cookie:テキスト情報をブラウザ側で一時的に保持している機能  
+    例：ログイン情報、カート機能、広告の最適化（サードパーティ Cookie）
+  - キャッシュ：閲覧したページをブラウザで保存  
+    スーパーリロードでキャッシュを削除できる。
+
+### [Firebase vs Supabase](https://www.youtube.com/watch?v=4iQL1oi6F18)
+
+- Firebase  
+  Google が提供している Web・モバイルのためのプラットフォーム。  
+  Backend as a Service→ バックエンドの環境構築の実装不要。開発コスト削減。
+  - Cloud Firestore:NoSQL（Not only SQL）のデータベース
+  - Firebase Analytics:アクセス分析
+  - Firebase Hosting:ホスティングサービス
+  - Firebase Authentication:認証機能
+  - Cloud Storage for Firebase:写真や動画の保存管理
+  - Firebase Cloud Message:メッセージング機能
+- Supabase  
+  シンガポールを拠点にするスタートアップ企業によって提供される BaaS
+  - BaaS で Firebase の代替として注目を集める
+  - オープンソースなので自分で用意したサーバーにデプロイ可能
+  - Firebase 同様にデータベース、認証、ストレージ機能などを提供
+  - PostgresSQL（RDBMS）を採用している
+- NoSQL vs RDBMS
+
+  - NoSQL
+    - スキーマを定義する必要がない
+    - 処理が高速
+    - 単純なデータを扱いやすい  
+      ↓
+    - 複雑なデータ処理が苦手
+    - データの一貫性や整合性が保証されない  
+      （NoSQL のイメージ）  
+       <img src="public/images/FirebaseVSSupabase.png" width="70%">
+  - RDBMS はデータを厳格に扱いたいときに便利
+
+    - 複雑なデータ処理が行える
+    - データ処理に一貫性、整合性がある
+    - 一般的には NoSQL より低速
+    - 学習コストがかかる
+
+- Firebase と Supabase の比較
+  | | Firebase | Supabase |
+  | :------------------- | :-------------------: | :----------------------: |
+  | 機能の種類 | 　　 優 | 劣 |
+  | データベース | NoSQL（ドキュメント） | PostgresSQL |
+  | 処理速度 | 優 | 劣 |
+  | 処理の一貫性・整合性 | 劣 | 優 |
+  | 向いている処理 | 単純な処理で大規模 | 決済処理などの複雑な処理 |
+  | 学習コスト | 低い | 高い |
