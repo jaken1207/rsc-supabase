@@ -1,7 +1,7 @@
 # _Notebooks_
 
-更新日時： 24/7/24 14:30  
-コース：16 実装は完了、再度見直してメモを残す
+更新日時： 24/7/26 14:30  
+コース：17 実装途中(ダイナミックセグメント前まで)でエラー原因がコードなのか Supabase のテーブル設定なのか不明
 ※16 と 17 は Subabase と Zustand が分からないので、学習し次第戻る
 
 マークダウンのプレビュ  
@@ -149,6 +149,7 @@ Repository：[GitHubRepo](https://github.com/GomaGoma676/nextjs-app-router-supab
   - payload 通信データの本体
 
 - Middleware
+  ログアウトした状態で URL にアクセスした際に、ログイン画面にリダイレクトするもの
 
   ## <i>Reference</i>
 
